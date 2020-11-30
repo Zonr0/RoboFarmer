@@ -72,7 +72,9 @@ def grab_window(title="Foo"):
 
     writer_context.SelectObject(bmp_object)
     # Copy from one device context into another
-    writer_context.BitBlt((0, 0), (width, height), source_context, (left, top), win32con.SRCCOPY)
+    # Destination coordinates seem to be relative to the context and not absolute screen coordinates. Therefore we pass
+    # 0,0 instead of top and left.
+    writer_context.BitBlt((0, 0), (width, height), source_context, (0, 0), win32con.SRCCOPY)
 
     image_array = np.frombuffer(bmp_object.GetBitmapBits(True), dtype='uint8')  # These are signed
     image_array.shape = (height, width, 4)
@@ -101,8 +103,8 @@ def test_screencapture():
     print("Tasks started. Type 'quit' to exit")
 
     cmd = ""
-    while cmd.lower() != 'quit':
-        cmd = input("Type 'quit' to exit: ")
+    while cmd.lower() != 'q':
+        cmd = input("Type 'quit' to exit: ")[0]
 
     # Send kill signal to both threads and then wait for each to stop
     print("Quitting")
