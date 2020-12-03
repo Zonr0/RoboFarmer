@@ -7,6 +7,22 @@ research stage. Eventually it will work through a combination of screencapture (
 and memory access (using the pure win32 api through ctypes) to automate some tedious tasks in
 *Story of Seasons: Friends of Mineral Town*. Tentatively, this includes crop and livestock management.
 
+## Requirements
+
+There is a whole lot complicated OCR, image processing, and platform dependent memory tricks used in this application.
+As such there are a few dependencies that need to be installed outside of this project. The python libraries are
+detailed in requirements.txt and can be fulfilled with `pip install -r requirements.txt` (as always, I would *strongly*
+recommend using a virtual environment). However, there are a few external dependencies that are also required.
+
+Currently these are:
+
+* Windows - the win32 API is used both for memory inspection and to take screenshots. Also, I'm pretty sure that the
+game doesn't run on *nix or macos anyway.
+* Google Tesseract - Currently used for OCR. I recommend [the UB-Manneheim Fork](https://github.com/UB-Mannheim/tesseract/wiki). 
+The binary should be on your path variable.
+* *Story of Seasons: Friends of Mineral Town* - I mean, you don't *need* it, but the program won't do anything for you
+if you don't have it.
+
 ## Setup Instructions
 
 As Robofarmer is in active (but possibly infrequent) development, it may be broken at any point in time. Requirements
@@ -42,8 +58,8 @@ hope is to transfer any new skills or techniques I pick up here.
 
 ## Status
 
-Initial research and experimentation with using the win32 api to take screenshots is complete. Next step is to either
-verify that it works okay with the game, or to start experimenting with memory inspection.
+The tool can now examine the game and attempt to return the time. It's... okay at it. With a little bit of tuning though
+we should be able to logic and reason around it.
 
 ## License
 

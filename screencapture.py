@@ -37,17 +37,17 @@ def screenshot_routine(title : str, image_queue : queue.Queue, stop_event : thre
     return
 
 
-def image_preview_routine(image_queue : queue.Queue, stop_event : threading.Event, consume=True):
-    try:
-        while not stop_event.is_set():
-            img = image_queue.get()
-            if consume:
-                image_queue.task_done()
-            cv2.imshow("Preview", img)
-            cv2.waitKey(1)
-    finally:
-        cv2.destroyAllWindows()
-    return
+# Does this make more sense in robofarmer? or screencapture?
+def image_preview_routine(preview_queue: queue.Queue, stop_event: threading.Event):
+    # It might be worth benchmarking to see if putting image preview logic in its own thread makes sense. It might be
+    # more sensible to put this in the image parse thread.
+    cv2.namedWindow("Real-Time Preview", cv2.WINDOW_NORMAL)
+    while not stop_event.is_set():
+        img = preview_queue.get()
+        cv2.imshow("Real-Time Preview", img)
+        cv2.waitKey(1)
+        preview_queue.task_done()
+    cv2.destroyWindow('Real-Time Preview')
 
 
 def grab_window(title="Foo"):
@@ -83,11 +83,12 @@ def grab_window(title="Foo"):
     win32gui.ReleaseDC(hwin, hwindc)
     win32gui.DeleteObject(bmp_object.GetHandle())
 
-    return cv2.cvtColor(image_array, cv2.COLOR_BGRA2RGB)
+    return image_array
+    #return cv2.cvtColor(image_array, cv2.COLOR_BGRA2RGB)
 
 def test_screencapture():
     IMAGE_BUFFER_SIZE = 12
-    found = get_windows_bytitle("Notepad")
+    found = get_windows_bytitle("STORY OF SEASONS")
     window_title = tuple(found.keys())[0]
 
     # Threading setup
