@@ -37,7 +37,7 @@ def get_and_exec_cmd():
     while cmd.lower() != 'q':
         cmd = input("Enter command (q to exit) ")
         if 'time' in cmd:
-            screenparse.find_time(ThreadManager.img_capture_queue.get())
+            screenparse.find_time_and_money(ThreadManager.img_capture_queue.get())
         if 'perf' in cmd:
             ThreadManager.get_performance()
 
@@ -74,7 +74,7 @@ def image_parsing_loop(game: gamestate.Game, mng: ThreadManager):
         ## EVERY 10 TICKS ##
         if current_tick % 10 == 0:
             pass
-            #parse_futures.append(ex.submit(screenparse.find_time))
+            # parse_futures.append(ex.submit(screenparse.find_time_and_money,frame,write_state))
 
         ## EVERY 30 TICKS ##
         if current_tick % 30 == 0:
@@ -135,8 +135,10 @@ def main():
         t.start()
     print("Tasks started. Type 'quit' to exit")
 
-    get_and_exec_cmd()
-    # screenparse.find_time(ThreadManager.img_capture_queue.get())
+    # get_and_exec_cmd()
+    test_state = gamestate.Game()
+    screenparse.find_time_and_money(ThreadManager.img_capture_queue.get(),test_state)
+    print(test_state.time)
 
     # Send kill signal to both threads and then wait for each to stop
     print("Quitting")
@@ -144,6 +146,7 @@ def main():
     ThreadManager.preview_stop_event.set()
     screenshot_thread.join(timeout=10)  # Need to stop this one first
     preview_thread.join(timeout=10)
+    image_parse_thread.join(timeout=10)
     print("Threads finished. Exiting.")
     return
 
